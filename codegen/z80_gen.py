@@ -262,7 +262,7 @@ def ex_de_hl():
 #
 def ex_sp_dd():
     src ='{'
-    src+='_T(3);'
+    src+='_T(1);_T(1);_T(1);'
     src+='addr=_G_SP();'
     src+='d16=_G_HL();'
     src+='uint8_t l,h;'
@@ -405,7 +405,7 @@ def ldi_ldd_ldir_lddr(y):
         src+='hl++;de++;'
     src+='_S_HL(hl);'
     src+='_S_DE(de);'
-    src+='_T(2);'
+    src+='_T(1);_T(1);'
     src+='d8+=_G_A();'
     src+='uint8_t f=_G_F()&(Z80_SF|Z80_ZF|Z80_CF);'
     src+='if(d8&0x02){f|=Z80_YF;}'
@@ -419,7 +419,7 @@ def ldi_ldd_ldir_lddr(y):
         src+='if(bc){'
         src+='pc-=2;'
         src+='_S_WZ(pc+1);'
-        src+='_T(5);'
+        src+='_T(1);_T(1);_T(1);_T(1);_T(1);'
         src+='}'
     src+='}'
     return src
@@ -440,7 +440,7 @@ def cpi_cpd_cpir_cpdr(y):
         src+='hl++;wz++;'
     src+='_S_WZ(wz);'
     src+='_S_HL(hl);'
-    src+='_T(5);'
+    src+='_T(1);_T(1);_T(1);_T(1);_T(1);'
     src+='int r=((int)_G_A())-d8;'
     src+='uint8_t f=(_G_F()&Z80_CF)|Z80_NF|_SZ(r);'
     src+='if((r&0x0F)>(_G_A()&0x0F)){'
@@ -458,7 +458,7 @@ def cpi_cpd_cpir_cpdr(y):
         src+='if(bc&&!(f&Z80_ZF)){'
         src+='pc-=2;'
         src+='_S_WZ(pc+1);'
-        src+='_T(5);'
+        src+='_T(1);_T(1);_T(1);_T(1);_T(1);'
         src+='}'
     src+='}'
     return src
@@ -494,7 +494,7 @@ def ini_ind_inir_indr(y):
     if y >= 6:
         src+='if(b){'
         src+='pc-=2;'
-        src+='_T(5);'
+        src+='_T(1);_T(1);_T(1);_T(1);_T(1);'
         src+='}'
     src+='}'
     return src
@@ -529,7 +529,7 @@ def outi_outd_otir_otdr(y):
     if y >= 6:
         src+='if(b){'
         src+='pc-=2;'
-        src+='_T(5);'
+        src+='_T(1);_T(1);_T(1);_T(1);_T(1);'
         src+='}'
     src+='}'
     return src
@@ -543,7 +543,7 @@ def djnz():
     src+='int8_t d;_IMM8(d);'
     src+='d8=_G_B()-1;'
     src+='_S_B(d8);'
-    src+='if(d8>0){pc+=d;_S_WZ(pc);_T(5);}'
+    src+='if(d8>0){pc+=d;_S_WZ(pc);_T(1);_T(1);_T(1);_T(1);_T(1);}'
     src+='}'
     return src
 
@@ -551,14 +551,14 @@ def djnz():
 #   jr()
 #
 def jr():
-    return '{int8_t d;_IMM8(d);pc+=d;_S_WZ(pc);_T(5);}'
+    return '{int8_t d;_IMM8(d);pc+=d;_S_WZ(pc);_T(1);_T(1);_T(1);_T(1);_T(1);}'
 
 #-------------------------------------------------------------------------------
 #   jr_cc()
 #
 def jr_cc(y):
     src ='{int8_t d;_IMM8(d);'
-    src+='if('+cond[y-4]+'){pc+=d;_S_WZ(pc);_T(5);}'
+    src+='if('+cond[y-4]+'){pc+=d;_S_WZ(pc);_T(1);_T(1);_T(1);_T(1);_T(1);}'
     src+='}'
     return src
 
@@ -782,7 +782,7 @@ def add16(p):
     src+='f|=((acc^r^d16)>>8)&Z80_HF;'
     src+='f|=((r>>16)&Z80_CF)|((r>>8)&(Z80_YF|Z80_XF));'
     src+='_S_F(f);'
-    src+='_T(7);'
+    src+='_T(1);_T(1);_T(1);_T(1);_T(1);_T(1);_T(1);'
     src+='}'
     return src
 
@@ -799,7 +799,7 @@ def adc16(p):
     src+='f|=(r>>8)&(Z80_SF|Z80_YF|Z80_XF);'
     src+='f|=(r&0xFFFF)?0:Z80_ZF;'
     src+='_S_F(f);'
-    src+='_T(7);'
+    src+='_T(1);_T(1);_T(1);_T(1);_T(1);_T(1);_T(1);'
     src+='}'
     return src
 
@@ -816,7 +816,7 @@ def sbc16(p):
     src+='f|=(r>>8)&(Z80_SF|Z80_YF|Z80_XF);'
     src+='f|=(r&0xFFFF)?0:Z80_ZF;'
     src+='_S_F(f);'
-    src+='_T(7);'
+    src+='_T(1);_T(1);_T(1);_T(1);_T(1);_T(1);_T(1);'
     src+='}'
     return src
 
@@ -835,7 +835,7 @@ def rrd():
     src+='_MW(addr++,d8);'
     src+='_S_WZ(addr);'
     src+='_S_F((_G_F()&Z80_CF)|_z80_szp[a]);'
-    src+='_T(4);'
+    src+='_T(1);_T(1);_T(1);_T(1);'
     src+='}'
     return src
 
@@ -851,7 +851,7 @@ def rld():
     src+='_MW(addr++,d8);'
     src+='_S_WZ(addr);'
     src+='_S_F((_G_F()&Z80_CF)|_z80_szp[a]);'
-    src+='_T(4);'
+    src+='_T(1);_T(1);_T(1);_T(1);'
     src+='}'
     return src
 
@@ -1054,10 +1054,10 @@ def enc_op(op) :
             # 16-bit INC/DEC 
             if q == 0:
                 o.cmt = 'INC '+rp[p]
-                o.src = '_T(2);_S_'+rp[p]+'(_G_'+rp[p]+'()+1);'
+                o.src = '_T(1);_T(1);_S_'+rp[p]+'(_G_'+rp[p]+'()+1);'
             else:
                 o.cmt = 'DEC '+rp[p]
-                o.src = '_T(2);_S_'+rp[p]+'(_G_'+rp[p]+'()-1);'
+                o.src = '_T(1);_T(1);_S_'+rp[p]+'(_G_'+rp[p]+'()-1);'
         elif z == 4 or z == 5:
             cmt = 'INC' if z == 4 else 'DEC'
             fn = inc8() if z==4 else dec8()
@@ -1110,7 +1110,7 @@ def enc_op(op) :
                     [ 'RET', ret() ],
                     [ 'EXX', exx() ],
                     [ 'JP '+rp[2], 'pc=_G_HL();' ],
-                    [ 'LD SP,'+rp[2], '_T(2);_S_SP(_G_HL());' ]
+                    [ 'LD SP,'+rp[2], '_T(1);_T(1);_S_SP(_G_HL());' ]
                 ]
                 o.cmt = op_tbl[p][0]
                 o.src = op_tbl[p][1]

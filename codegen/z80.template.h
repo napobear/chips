@@ -606,13 +606,13 @@ bool z80_ei_pending(z80_t* cpu);
 /* invoke tick callback (with wait state detection) */
 #define _TWM(num,mask) pins=tick(num,(pins&~(Z80_WAIT_MASK|Z80_CTRL_MASK))|(mask),ud);ticks+=num+Z80_GET_WAIT(pins)
 /* memory read machine cycle */
-#define _MR(addr,data) _SA(addr);_TWM(3,Z80_MREQ|Z80_RD);data=_GD()
+#define _MR(addr,data) _SA(addr);_T(1);_T(1);_TWM(1,Z80_MREQ|Z80_RD);data=_GD()
 /* memory write machine cycle */
-#define _MW(addr,data) _SAD(addr,data);_TWM(3,Z80_MREQ|Z80_WR)
+#define _MW(addr,data) _SAD(addr,data);_T(1);_T(1);_TWM(1,Z80_MREQ|Z80_WR)
 /* input machine cycle */
-#define _IN(addr,data) _SA(addr);_TWM(4,Z80_IORQ|Z80_RD);data=_GD()
+#define _IN(addr,data) _SA(addr);_T(1);_T(1);_T(1);_TWM(1,Z80_IORQ|Z80_RD);data=_GD()
 /* output machine cycle */
-#define _OUT(addr,data) _SAD(addr,data);_TWM(4,Z80_IORQ|Z80_WR);
+#define _OUT(addr,data) _SAD(addr,data);_T(1);_T(1);_T(1);_TWM(1,Z80_IORQ|Z80_WR);
 /* read 8-bit immediate value */
 #define _IMM8(data) _MR(pc++,data);
 /* read 16-bit immediate value (also update WZ register) */
@@ -625,12 +625,12 @@ bool z80_ei_pending(z80_t* cpu);
 #define _BUMPR() d8=_G8(r2,_R);d8=(d8&0x80)|((d8+1)&0x7F);_S8(r2,_R,d8)
 /* a normal opcode fetch, bump R */
 #ifdef CHIPS_Z80_RFSH
-#define _FETCH(op) {_SA(pc++);_TWM(3,Z80_M1|Z80_MREQ|Z80_RD);op=_GD();_SA(_G_I()<<8|_G_R());_TM(1,Z80_MREQ|Z80_RFSH);_BUMPR();}
+#define _FETCH(op) {_SA(pc++);_TWM(1,Z80_M1|Z80_MREQ|Z80_RD);_T(1);_T(1);op=_GD();_SA(_G_I()<<8|_G_R());_TM(1,Z80_MREQ|Z80_RFSH);_BUMPR();}
 #else
-#define _FETCH(op) {_SA(pc++);_TWM(4,Z80_M1|Z80_MREQ|Z80_RD);op=_GD();_BUMPR();}
+#define _FETCH(op) {_SA(pc++);_TWM(1,Z80_M1|Z80_MREQ|Z80_RD);_T(1);_T(1);_T(1);op=_GD();_BUMPR();}
 #endif
 /* special opcode fetch for CB prefix, only bump R if not a DD/FD+CB 'double prefix' op */
-#define _FETCH_CB(op) {_SA(pc++);_TWM(4,Z80_M1|Z80_MREQ|Z80_RD);op=_GD();if(!_IDX()){_BUMPR();}}
+#define _FETCH_CB(op) {_SA(pc++);_TWM(1,Z80_M1|Z80_MREQ|Z80_RD);_T(1);_T(1);_T(1);op=_GD();if(!_IDX()){_BUMPR();}}
 /* evaluate S+Z flags */
 #define _SZ(val) ((val&0xFF)?(val&Z80_SF):Z80_ZF)
 /* evaluate SZYXCH flags */
